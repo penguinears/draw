@@ -1,57 +1,52 @@
-const canvas = document.getElementById('drawing-board');
-const toolbar = document.getElementById('toolbar');
-const ctx = canvas.getContext('2d');
+const canvas = document.getElementById("drawing-board");
+const ctx = canvas.getContext("2d");
 
-const canvasOffsetX = canvas.offsetLeft;
-const canvasOffsetY = canvas.offsetTop;
+// Proper canvas scaling for sharp lines
+function resizeCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
 
-canvas.width = window.innerWidth - canvasOffsetX;
-canvas.height = window.innerHeight - canvasOffsetY;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
 
-let isPainting = false;
-let lineWidth = 5;
-let startX;
-let startY;
-
-toolbar.addEventListener('click', e => {
-    if (e.target.id === 'clear') {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-});
-
-toolbar.addEventListener('change', e => {
-    if(e.target.id === 'stroke') {
-        ctx.strokeStyle = e.target.value;
-    }
-
-    if(e.target.id === 'lineWidth') {
-        lineWidth = e.target.value;
-    }
-    
-});
-
-const draw = (e) => {
-    if(!isPainting) {
-        return;
-    }
-
-    ctx.lineWidth = lineWidth;
-    ctx.lineCap = 'round';
-
-    ctx.lineTo(e.clientX - canvasOffsetX, e.clientY);
-    ctx.stroke();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
-canvas.addEventListener('mousedown', (e) => {
-    isPainting = true;
-    startX = e.clientX;
-    startY = e.clientY;
-});
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
-canvas.addEventListener('mouseup', e => {
-    isPainting = false;
-    ctx.stroke();
+// Smooth lines
+ctx.lineCap = "round";
+ctx.lineJoin = "round";
+ctx.strokeStyle = "#ffffff";
+ctx.lineWidth = 5;
+
+let isDrawing = false;
+
+canvas.addEventListener("mousedown", e => {
+    isDrawing = true;
     ctx.beginPath();
+    ctx.moveTo(e.offsetX, e.offsetY);
 });
 
-canvas.addEventListener('mousemove', draw);
+canvas.addEventListener("mousemove", e => {
+    if (!isDrawing) return;
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+});
+
+canvas.addEventListener("mouseup", () => isDrawing = false);
+canvas.addEventListener("mouseleave", () => isDrawing = false);
+
+// Toolbar controls
+document.getElementById("stroke").addEventListener("input", e => {
+    ctx.strokeStyle = e.target.value;
+});
+
+document.getElementById("lineWidth").addEventListener("input", e => {
+    ctx.lineWidth = e.target.value;
+});
+
+document.getElementById("clear").addEventListener("click", () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+});
