@@ -1,26 +1,31 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Wide Whiteboard</title>
     <link rel="stylesheet" href="styles.css">
-    <title>Drawing app</title>
 </head>
 <body>
     <section class="container">
         <div id="toolbar">
-            <h1>WorldWide</h1>
-            <h1>WhiteBoard</h1>
-            <label for="stroke">Stroke</label>
-            <input id="stroke" name='stroke' type="color">
-            <label for="lineWidth">Line Width</label>
-            <input id="lineWidth" name='lineWidth' type="number" value="5">
+            <h1 class="logo">World Wide Whiteboard</h1>
+
+            <label for="stroke">Color</label>
+            <input id="stroke" name="stroke" type="color" value="#000000">
+
+            <label for="lineWidth">Size</label>
+            <input id="lineWidth" name="lineWidth" type="range" min="1" max="50" value="5">
+
             <button id="clear">Clear</button>
         </div>
+
         <div class="drawing-board">
             <canvas id="drawing-board"></canvas>
         </div>
     </section>
-    <script src="./index.js"></script>
+
+    <script src="index.js"></script>
 </body>
 </html>
